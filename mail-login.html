@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KADCOS Mail Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Marcellus', serif;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -14,43 +20,98 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            color: #333;
         }
         .login-container {
             background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             text-align: center;
-            max-width: 400px;
+            max-width: 450px;
             width: 90%;
         }
         .logo {
-            max-width: 150px;
-            margin-bottom: 1rem;
+            max-width: 120px;
+            margin-bottom: 1.5rem;
         }
         h1 {
             color: #e67e22;
             margin-bottom: 0.5rem;
+            font-size: 2rem;
         }
         .subtitle {
             color: #666;
             margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Marcellus', serif;
+            transition: border-color 0.3s;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #e67e22;
         }
         .login-btn {
             background-color: #e67e22;
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 14px 30px;
             border-radius: 25px;
             font-size: 16px;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: background-color 0.3s;
+            width: 100%;
             font-family: 'Marcellus', serif;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-bottom: 1rem;
         }
         .login-btn:hover {
             background-color: #d35400;
+        }
+        .login-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: #e74c3c;
+            margin-top: 1rem;
+            display: none;
+        }
+        .loading {
+            display: none;
+            margin-top: 1rem;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #e67e22;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -59,9 +120,92 @@
         <img src="https://www.kadcoslubaga.co.ug/images/KADCOS-02.png" alt="KADCOS Logo" class="logo">
         <h1>KADCOS Mail</h1>
         <p class="subtitle">Access your professional email</p>
-        <a href="https://mail.mxlogin.com/#!/dashboard" class="login-btn">
-            Login to Email
-        </a>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="yourname@kadcoslubaga.co.ug">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginButton">
+                Login to Email
+            </button>
+            
+            <div class="error-message" id="errorMessage">
+                Invalid email or password. Please try again.
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Logging in...</p>
+            </div>
+        </form>
     </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginButton = document.getElementById('loginButton');
+            const errorMessage = document.getElementById('errorMessage');
+            const loading = document.getElementById('loading');
+            
+            // Show loading
+            loginButton.disabled = true;
+            loading.style.display = 'block';
+            errorMessage.style.display = 'none';
+            
+            // MXRoute authentication (this is a simplified version)
+            // Note: Actual implementation would need server-side component for security
+            authenticateWithMXRoute(email, password);
+        });
+
+        function authenticateWithMXRoute(email, password) {
+            // Since we cannot directly authenticate client-side due to CORS and security,
+            // we'll use a serverless function approach
+            
+            // For now, we'll redirect to MXRoute with a message
+            // In a real implementation, you'd use a serverless function to validate credentials
+            
+            setTimeout(() => {
+                // This is where you'd integrate with a serverless function
+                // For demonstration, we'll assume success and redirect
+                window.location.href = `https://mail.mxlogin.com/#!/dashboard`;
+            }, 1500);
+            
+            // Actual implementation would look like:
+            /*
+            fetch('/.netlify/functions/mxroute-auth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = 'https://mail.mxlogin.com/#!/dashboard';
+                } else {
+                    showError();
+                }
+            })
+            .catch(showError);
+            */
+        }
+
+        function showError() {
+            document.getElementById('loginButton').disabled = false;
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
